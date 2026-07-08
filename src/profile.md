@@ -66,6 +66,11 @@ layout: single
 
   <div class="rdb-cards" id="inst-score-cards"></div>
 
+  <div id="inst-chart-section" class="rdb-hidden">
+    <h3>Contributions Over Time</h3>
+    <div class="chart-container"><div id="instTimelineChart" style="height:300px"></div></div>
+  </div>
+
   <div id="inst-contributors-section" class="rdb-hidden">
     <h3>Top Contributors</h3>
     <div id="contributors-table"></div>

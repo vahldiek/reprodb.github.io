@@ -275,12 +275,23 @@
   function renderTimelineChart(p, papers, afPapers) {
     afPapers = afPapers || [];
     var aeYears = p.ae_years || {};
+    renderContributionChart('chart-section', 'timelineChart', papers, afPapers, aeYears);
+  }
+
+  function renderContributionChart(sectionId, chartId, papers, afPapers, aeYears) {
+    papers = papers || [];
+    afPapers = afPapers || [];
+    aeYears = aeYears || {};
+
     var yearSet = {};
     papers.forEach(function(pp) { if (pp.year) yearSet[pp.year] = true; });
     afPapers.forEach(function(pp) { if (pp.year) yearSet[pp.year] = true; });
     Object.keys(aeYears).forEach(function(y) { yearSet[y] = true; });
     var years = Object.keys(yearSet).map(Number).sort();
-    if (years.length < 1) { document.getElementById('chart-section').classList.add('rdb-hidden'); return; }
+    if (years.length < 1) {
+      document.getElementById(sectionId).classList.add('rdb-hidden');
+      return;
+    }
 
     var allYears = [];
     for (var y = years[0]; y <= years[years.length - 1]; y++) allYears.push(y);
@@ -289,8 +300,8 @@
     var afc = {};
     afPapers.forEach(function(pp) { if (pp.year) afc[pp.year] = (afc[pp.year] || 0) + 1; });
 
-    document.getElementById('chart-section').classList.remove('rdb-hidden');
-    var chart = ReproDB.initEChart('timelineChart');
+    document.getElementById(sectionId).classList.remove('rdb-hidden');
+    var chart = ReproDB.initEChart(chartId);
     var series = [{ name: 'Artifact Papers', type: 'bar', data: allYears.map(function(y) { return pc[y] || 0; }), itemStyle: { color: 'rgba(52,152,219,0.7)' } }];
     if (afPapers.length) {
       series.push({ name: 'ArtiFinder (discovered)', type: 'bar', data: allYears.map(function(y) { return afc[y] || 0; }), itemStyle: { color: 'rgba(74,90,168,0.75)' } });
@@ -439,6 +450,12 @@
       totalAE += (p.ae_memberships || 0);
       totalChairs += (p.chair_count || 0);
     });
+    var instAeYears = {};
+    aeData.forEach(function(entry) {
+      if (!entry.year) return;
+      instAeYears[entry.year] = (instAeYears[entry.year] || 0) + 1;
+    });
+    renderContributionChart('inst-chart-section', 'instTimelineChart', Object.values(paperMap), Object.values(afMap), instAeYears);
     aeData.sort(function(a, b) { return (b.year || 0) !== (a.year || 0) ? (b.year || 0) - (a.year || 0) : (a.conference || '').localeCompare(b.conference || ''); });
     if (aeData.length) {
       document.getElementById('inst-ae-section').classList.remove('rdb-hidden');
