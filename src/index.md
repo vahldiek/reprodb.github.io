@@ -8,7 +8,7 @@ skip_chartjs: true
 <div id="search-hero" class="rdb-search-hero">
   <div class="rdb-search-hero-inner">
     <p class="rdb-search-tagline">
-      Research artifacts and artifact evaluation drive reproducibility and scientific impact. <strong>ReproDB</strong> aggregates and surfaces artifact evaluation outcomes across major <a href="{{ '/security/' | relative_url }}">security</a> and <a href="{{ '/systems/' | relative_url }}">systems</a> conferences, recognizing the contributions of both artifact authors and artifact evaluation service.
+      Research artifacts and artifact evaluation drive reproducibility and scientific impact. <strong>ReproDB</strong> aggregates and surfaces artifact evaluation outcomes across major <a href="{{ '/security/' | relative_url }}">security</a> and <a href="{{ '/systems/' | relative_url }}">systems</a> conferences, and also includes automatically discovered artifact links from <a href="{{ '/artifinder.html' | relative_url }}">ArtiFinder</a>. The site recognizes the contributions of both artifact authors and artifact evaluation service.
     </p>
     <div id="search-container">
       <div class="rdb-search-box-wrap">
