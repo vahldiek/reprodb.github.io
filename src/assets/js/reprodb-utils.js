@@ -96,6 +96,13 @@
   R.initEChart = function(el) {
     if (typeof el === 'string') el = document.getElementById(el);
     if (!el) return null;
+    // Dispose any existing instance on this element so re-renders start from
+    // a clean slate. echarts.init otherwise returns the existing instance, and
+    // a subsequent setOption() merges by default — leaving stale series/data
+    // (e.g. a previous profile's "AE Committee Service" bars) behind when
+    // switching between people on the profile page.
+    var existing = echarts.getInstanceByDom(el);
+    if (existing) existing.dispose();
     var chart = echarts.init(el, null, { renderer: 'canvas' });
 
     // Wrap setOption so every call automatically re-applies theme text
