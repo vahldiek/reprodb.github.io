@@ -13,6 +13,13 @@ The [search bar]({{ '/' | relative_url }}) supports special `#` keywords that fi
 | `#github` | Artifacts hosted on GitHub |
 | `#zenodo` | Artifacts hosted on Zenodo |
 | `#nourl` | Artifacts with no artifact URL recorded |
+| `#artifinder` | Results tagged as ArtiFinder-discovered only |
+| `#available` | Artifacts with the Available badge |
+| `#functional` | Artifacts with the Functional badge |
+| `#reproduced` | Artifacts with the Reproduced badge |
+| `#reproducible` | Alias for `#reproduced` |
+| `#reusable` | Artifacts with the Reusable badge |
+| `#evaluated` | Artifacts with the Artifact Evaluated badge |
 
 **Examples:**
 
@@ -20,6 +27,9 @@ The [search bar]({{ '/' | relative_url }}) supports special `#` keywords that fi
 - `#awarded OSDI` - award-winning OSDI artifacts
 - `#github #unavailable 2022` - GitHub-hosted artifacts from 2022 with dead links
 - `#zenodo fuzzing` - Zenodo-hosted fuzzing artifacts
+- `#artifinder malware` - ArtiFinder-tagged artifacts matching "malware"
+- `#available #functional` - artifacts that are both available and functional
+- `#reproducible usenixsec` - reproduced artifacts for USENIX Security
 
 Keywords also work alongside the year, venue, and area dropdown filters.
 

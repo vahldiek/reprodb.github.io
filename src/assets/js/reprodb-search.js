@@ -29,6 +29,34 @@
     return (s || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ');
   }
 
+  function normalizeBadgeForFilter(v) {
+    var t = String(v || '').toLowerCase().replace('badges: ', '').trim();
+    if (t === 'reproducible') return 'reproduced';
+    if (t === 'artifact evaluated') return 'evaluated';
+    return t;
+  }
+
+  function extractBadgeKeywords(raw) {
+    var matches = String(raw || '').toLowerCase().match(/#[a-z]+/g) || [];
+    var seen = {};
+    var selected = [];
+    matches.forEach(function(tag) {
+      var t = tag.replace(/^#/, '');
+      if (t === 'reproducible') t = 'reproduced';
+      if (['available', 'reproduced', 'functional', 'reusable', 'evaluated'].indexOf(t) !== -1 && !seen[t]) {
+        seen[t] = true;
+        selected.push(t);
+      }
+    });
+    return selected;
+  }
+
+  function stripMagicKeywords(raw) {
+    return String(raw || '')
+      .replace(/#(unavailable|awarded|github|zenodo|nourl|artifinder|available|reproduced|reproducible|functional|reusable|evaluated)/gi, '')
+      .trim();
+  }
+
   function buildSearchIndex(data) {
     data.forEach(function(d) {
       d._search = normalizeText(d.title) + ' ' +
@@ -62,14 +90,16 @@
 
   function doSearch() {
     var raw = document.getElementById('searchBox').value.trim();
+    var rawLower = raw.toLowerCase();
     // Parse magic keywords
-    var onlyUnavail = raw.indexOf('#unavailable') !== -1;
-    var onlyAwarded = raw.indexOf('#awarded') !== -1;
-    var onlyGithub = raw.indexOf('#github') !== -1;
-    var onlyZenodo = raw.indexOf('#zenodo') !== -1;
-    var onlyNourl = raw.indexOf('#nourl') !== -1;
-    var onlyArtifinder = raw.indexOf('#artifinder') !== -1;
-    var cleaned = raw.replace(/#(unavailable|awarded|github|zenodo|nourl|artifinder)/g, '').trim();
+    var onlyUnavail = rawLower.indexOf('#unavailable') !== -1;
+    var onlyAwarded = rawLower.indexOf('#awarded') !== -1;
+    var onlyGithub = rawLower.indexOf('#github') !== -1;
+    var onlyZenodo = rawLower.indexOf('#zenodo') !== -1;
+    var onlyNourl = rawLower.indexOf('#nourl') !== -1;
+    var onlyArtifinder = rawLower.indexOf('#artifinder') !== -1;
+    var selectedBadges = extractBadgeKeywords(rawLower);
+    var cleaned = stripMagicKeywords(raw);
     var query = normalizeText(cleaned);
     var yearVal = document.getElementById('yearFilter').value;
     var venueVal = document.getElementById('venueFilter').value;
@@ -105,6 +135,13 @@
       }
       if (onlyArtifinder) {
         if (!d.artifinder_urls || d.artifinder_urls.length === 0) return false;
+      }
+      if (selectedBadges.length > 0) {
+        var recBadges = (d.badges || []).map(normalizeBadgeForFilter);
+        var hasAllSelectedBadges = selectedBadges.every(function(b) {
+          return recBadges.indexOf(b) !== -1;
+        });
+        if (!hasAllSelectedBadges) return false;
       }
       if (terms.length === 0) return true;
       return terms.every(function(t) { return d._search.indexOf(t) !== -1; });
@@ -175,7 +212,7 @@
     var status = document.getElementById('searchStatus');
     var hero = document.getElementById('search-hero');
     var query = document.getElementById('searchBox').value.trim();
-    var cleaned = query.replace(/#(unavailable|awarded|github|zenodo|nourl)/g, '').trim();
+    var cleaned = stripMagicKeywords(query);
     var terms = normalizeText(cleaned).split(/\s+/).filter(function(t) { return t.length > 0; });
     var yearVal = document.getElementById('yearFilter').value;
     var venueVal = document.getElementById('venueFilter').value;
@@ -511,7 +548,7 @@
       // Re-render profile cards if the user is already searching
       if (filtered.length > 0 || document.getElementById('searchBox').value.trim().length >= 2) {
         var raw = document.getElementById('searchBox').value.trim();
-        var cleaned = raw.replace(/#(unavailable|awarded|github|zenodo|nourl)/g, '').trim();
+        var cleaned = stripMagicKeywords(raw);
         var terms = normalizeText(cleaned).split(/\s+/).filter(function(t) { return t.length > 0; });
         renderProfileCards(raw, terms);
       }
