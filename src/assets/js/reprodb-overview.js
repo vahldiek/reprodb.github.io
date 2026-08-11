@@ -144,6 +144,8 @@
       var el = document.getElementById('partRateChartCombined');
       if (!el) return;
       var yrSet = {};
+      /* Extend x-axis to cover all artifact/committee years, not just participation years */
+      years.forEach(function(y) { yrSet[y] = true; });
       if (sysData && sysData.years) sysData.years.forEach(function(y) { yrSet[y] = true; });
       if (secData && secData.years) secData.years.forEach(function(y) { yrSet[y] = true; });
       var yrs = Object.keys(yrSet).sort();
